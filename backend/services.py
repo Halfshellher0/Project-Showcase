@@ -55,4 +55,16 @@ async def get_current_user(token: str = _fastapi.Depends(oauth2schema), db: _orm
         raise _fastapi.HTTPException(status_code=401, detail="Invalid username or password")
     
     return _schemas.User.from_orm(user)
+
+async def create_project(project: _schemas.Project, db: _orm.Session):
+    project = _models.Project(**project.dict())
+    db.add(project)
+    db.commit()
+    db.refresh(project)
+    return _schemas.Project.from_orm(project)
+
+async def get_projects(db: _orm.Session):
+    projects = db.query(_models.Project).all()
+
+    return list(map(_schemas.Project.from_orm, projects))
     

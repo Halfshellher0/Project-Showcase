@@ -16,3 +16,14 @@ class User(_UserBase):
     class Config:
         orm_mode = True
 
+class _ProjectBase(_pydantic.BaseModel):
+    name: str
+    description: str
+    github: str
+    iconPath: str
+
+class Project(_ProjectBase):
+    id: int
+
+    class Config:
+        orm_mode = True

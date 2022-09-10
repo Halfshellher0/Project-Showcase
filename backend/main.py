@@ -1,3 +1,4 @@
+from typing import List
 import fastapi as _fastapi
 import fastapi.security as _security
 import sqlalchemy.orm as _orm
@@ -8,7 +9,8 @@ app = _fastapi.FastAPI()
 
 @app.post("/api/users")
 async def create_user(
-    user: _schemas.UserCreate, 
+    user: _schemas.UserCreate,
+    admin: _schemas.User = _fastapi.Depends(_services.get_current_user),
     db: _orm.Session = _fastapi.Depends(_services.get_db)
 ):
     db_user = await _services.get_user_by_username(user.username, db)
@@ -32,3 +34,17 @@ async def generate_token(
 @app.get("/api/users/me", response_model=_schemas.User)
 async def get_user(user: _schemas.User = _fastapi.Depends(_services.get_current_user)):
     return user
+
+@app.post("/api/projects", response_model=_schemas.Project)
+async def create_project(
+    project: _schemas._ProjectBase,
+    admin: _schemas.User = _fastapi.Depends(_services.get_current_user), # need to be signed in for access.
+    db: _orm.Session = _fastapi.Depends(_services.get_db)
+):
+    return await _services.create_project(project=project,db=db)
+
+@app.get("/api/projects", response_model=List[_schemas.Project])
+async def get_projects(
+    db: _orm.Session = _fastapi.Depends(_services.get_db)
+):
+    return await _services.get_projects(db)
