@@ -48,3 +48,22 @@ async def get_projects(
     db: _orm.Session = _fastapi.Depends(_services.get_db)
 ):
     return await _services.get_projects(db)
+
+@app.delete("/api/projects/{project_id}", status_code=204)
+async def delete_project(
+    project_id: int,
+    admin: _schemas.User = _fastapi.Depends(_services.get_current_user), # need to be signed in for access.
+    db: _orm.Session = _fastapi.Depends(_services.get_db)
+):    
+    await _services.delete_project(project_id, db)
+    return {"message": "Successfully Deleted"}
+
+@app.put("/api/projects/{project_id}", status_code=200)
+async def update_project(
+    project_id: int,
+    project: _schemas._ProjectBase,
+    admin: _schemas.User = _fastapi.Depends(_services.get_current_user), # need to be signed in for access.
+    db: _orm.Session = _fastapi.Depends(_services.get_db)
+):
+    await _services.update_project(project_id, project, db)
+    return {"message": "Successfully Updated"}

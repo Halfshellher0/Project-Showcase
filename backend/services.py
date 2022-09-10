@@ -67,4 +67,31 @@ async def get_projects(db: _orm.Session):
     projects = db.query(_models.Project).all()
 
     return list(map(_schemas.Project.from_orm, projects))
+
+async def _project_selector(project_id: int, db: _orm.Session):
+    project = db.query(_models.Project).filter(_models.Project.id == project_id).first()
     
+    if project is None:
+        raise _fastapi.HTTPException(status_code=404, detail="Project does not exist")
+
+    return project
+
+async def delete_project(project_id: int, db: _orm.Session):
+    project = await _project_selector(project_id, db)
+
+    db.delete(project)
+    db.commit()
+
+async def update_project(project_id: int, project: _schemas._ProjectBase, db: _orm.Session):
+    project_db = await _project_selector(project_id, db)
+
+    project_db.name = project.name
+    project_db.description = project.description
+    project_db.github = project.github
+    project_db.iconPath = project.iconPath
+
+    db.commit()
+    db.refresh(project_db)
+
+    return _schemas.Project.from_orm(project_db)
+
