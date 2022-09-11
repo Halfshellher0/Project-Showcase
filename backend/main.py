@@ -67,3 +67,7 @@ async def update_project(
 ):
     await _services.update_project(project_id, project, db)
     return {"message": "Successfully Updated"}
+
+@app.get("/api")
+async def root():
+    return {"message": "This Works"}
