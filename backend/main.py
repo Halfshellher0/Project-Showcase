@@ -4,8 +4,24 @@ import fastapi.security as _security
 import sqlalchemy.orm as _orm
 import services as _services
 import schemas as _schemas
+from fastapi.middleware.cors import CORSMiddleware
 
 app = _fastapi.FastAPI()
+
+origins = [
+    "https://localhost:3000",
+    "https://ocalhost:8080",
+    "http://localhost:3000",
+    "http://localhost:8080",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.post("/api/users")
 async def create_user(
