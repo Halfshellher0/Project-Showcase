@@ -2,7 +2,7 @@ import './App.css';
 import React, { Component } from 'react';
 import {BrowserRouter as Router} from 'react-router-dom';
 import axios from 'axios';
-import Navbar from './components/Navbar';
+import Home from './pages';
 
 const api = axios.create({
   baseURL: 'http://localhost:8000/api/'
@@ -24,7 +24,7 @@ class App extends Component {
   render() {
     return (
       <Router>
-        <Navbar />
+        <Home />
         {this.state.projects.map(project => <h2 key={project.id}>{project.name}</h2>)}     
       </Router>
     )      
